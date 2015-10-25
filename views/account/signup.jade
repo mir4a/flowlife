@@ -1,0 +1,17 @@
+extends ../layout
+
+block content
+  h3 Sign up
+  form(id='login_form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    hr
+    label(for='email') Email
+    input(type='email', name='email', id='email', placeholder='Email', autofocus)
+    br
+    label(for='password') Password
+    input(type='password', name='password', id='password', placeholder='Password')
+    br
+    label(for='confirmPassword') Confirm Password
+    input(type='password', name='confirmPassword', id='confirmpassword', placeholder='Confirm Password')
+    hr
+    button(type='submit') Signup

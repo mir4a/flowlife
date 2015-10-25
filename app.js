@@ -5,11 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var compress = require('compression');
+var lusca = require('lusca');
 
 var MongoStore = require('connect-mongo')(session);
 var flash = require('express-flash');
 var mongoose = require('mongoose');
 var passport = require('passport');
+var expressValidator = require('express-validator');
 
 // Secrets and passport conf
 var secrets = require('./config/secrets');
@@ -21,6 +24,15 @@ var users = require('./routes/users');
 
 var app = express();
 
+/**
+ * Connect to MongoDB.
+ */
+mongoose.connect(secrets.db);
+mongoose.connection.on('error', function() {
+  console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+  process.exit(1);
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -30,12 +42,34 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator());
 app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(compress());
+app.use(session({
+  resave: true,
+  saveUninitialized: true,
+  secret: secrets.sessionSecret,
+  store: new MongoStore({ url: secrets.db, autoReconnect: true })
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+app.use(lusca({
+  csrf: true,
+  xframe: 'SAMEORIGIN',
+  xssProtection: true
+}));
+
+app.use(function(req, res, next) {
+  res.locals.user = req.user;
+  next();
+});
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/user', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
