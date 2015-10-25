@@ -1,0 +1,15 @@
+{
+  "name": "flowlife",
+  "version": "0.0.1",
+  "description": "Flower Pot Watering app",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Miroslav Martynov <marty.mircha@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
