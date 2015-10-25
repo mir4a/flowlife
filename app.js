@@ -4,9 +4,20 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+
+var MongoStore = require('connect-mongo')(session);
+var flash = require('express-flash');
+var mongoose = require('mongoose');
+var passport = require('passport');
+
+// Secrets and passport conf
+var secrets = require('./config/secrets');
+var passportConf = require('./config/passport');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+
 
 var app = express();
 
