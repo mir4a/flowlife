@@ -6,5 +6,9 @@ var nodemailer = require('nodemailer'),
     });
 
 module.exports = {
-
+  sendEmail: sendEmail
 };
+
+function sendEmail() {
+  console.log(this);
+}
