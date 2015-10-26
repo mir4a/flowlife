@@ -1,6 +1,7 @@
 var bcrypt = require('bcrypt-nodejs');
 var crypto = require('crypto');
 var mongoose = require('mongoose');
+var Flower = require('./Flower');
 
 var userSchema = new mongoose.Schema({
   email: { type: String, unique: true, lowercase: true },
@@ -15,6 +16,8 @@ var userSchema = new mongoose.Schema({
     website: { type: String, default: '' },
     picture: { type: String, default: '' }
   },
+
+  flowers: [Flower],
 
   resetPasswordToken: String,
   resetPasswordExpires: Date

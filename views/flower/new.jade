@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  h3 Add new Flower
+
+  form(id='new_flower', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    hr
+    label(for='flower_name') Flower Name
+    input(type='text', id='flower_name', name='name', placeholder='Flower name', autofocus)
+    br
+    label(for='flower_species') Type of Species
+    input(type='text', id='flower_species', name='species', placeholder='Flower species')
+    br
+    label(for='flower_wateringInterval') Watering Interval (NUmber of days)
+    input(type='number', id='flower_wateringInterval', name='wateringInterval', placeholder='Watering Interval')
+    hr
+    button(type='submit') Add

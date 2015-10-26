@@ -20,6 +20,7 @@ var passportConf = require('./config/passport');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var flowers = require('./routes/flowers');
 
 
 var app = express();
@@ -69,7 +70,8 @@ app.use(function(req, res, next) {
 });
 
 app.use('/', routes);
-app.use('/user', users);
+app.use('/account', users);
+app.use('/flower', flowers);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
