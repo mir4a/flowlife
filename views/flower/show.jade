@@ -1,9 +1,32 @@
 extends ../layout
 
 block content
-  h3 Show #{flower.name}
-  //FIXME: Move this logic to controller
-  pre #{user.flowers[2].nextWatering()}
+  - var status_class = (flower.live ? 'live' : 'dead')
+  h3
+    | Show #{flower.name}
+    span(class='status_tag #{status_class}')
+  - if (!flower.live)
+    form(method="POST")
+      input(type='hidden', name='_csrf', value=_csrf)
+      input(type='hidden', name='removeFlower', value=flower.name)
+      div Sandly but #{flower.name} is no longer with us
+      small
+        | You can
+        button(type="submit") remove
+        | it from your list of flowers
+  dl
+    dt Species of this flower
+    dd #{flower.species}
+    dt Next time to watering
+    dd #{flower.nextWatering}
+    dt Interval for watering
+    dd #{flower.wateringInterval} days
+    dt Total number of watering
+    dd #{flower.wateringCounter} times
+    dt Last time watering
+    dd #{flower.lastWatering}
+
+
 
   //pre Next watering at #{flower.nextWatering()}
   //pre #{flower}

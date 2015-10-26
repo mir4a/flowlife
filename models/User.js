@@ -17,6 +17,7 @@ var userSchema = new mongoose.Schema({
     picture: { type: String, default: '' }
   },
 
+  // TODO: Not sure if I need sub-documents here, maybe it's better to store here array of flower ids.
   flowers: [Flower],
 
   resetPasswordToken: String,

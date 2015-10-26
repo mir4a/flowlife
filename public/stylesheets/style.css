@@ -5,3 +5,37 @@ body {
 a {
   color: #00b7ff;
 }
+small {
+  font-size: 75%;
+}
+.status_tag {
+  display: inline-block;
+  vertical-align: middle;
+  width: 6px;
+  height: 6px;
+  margin-left: 5px;
+  border-radius: 50%;
+  background: #fce931;
+}
+.status_tag.live {
+  background: #63c91a;
+}
+.status_tag.dead {
+  background: #fc2f31;
+}
+.flowers_list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+.flowers_list .item {
+  margin-bottom: 5px;
+  position: relative;
+  padding-left: 16px;
+}
+.flowers_list .item .status_tag {
+  margin: 0;
+  position: absolute;
+  left: 2px;
+  top: 7px;
+}

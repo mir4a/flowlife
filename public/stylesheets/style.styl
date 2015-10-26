@@ -3,3 +3,38 @@ body
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
 a
   color: #00B7FF
+
+small
+  font-size 75%
+
+status_tag_size = 6px
+status_tag_live_bg = #63c91a
+status_tag_dead_bg = #fc2f31
+status_tag_default_bg = #fce931
+.status_tag
+  display inline-block
+  vertical-align middle
+  width status_tag_size
+  height status_tag_size
+  margin-left: 5px
+  border-radius 50%
+  background status_tag_default_bg
+  &.live
+    background status_tag_live_bg
+  &.dead
+    background status_tag_dead_bg
+
+// All flowers view
+.flowers_list
+  list-style none
+  padding 0
+  margin 20px 0
+  .item
+    margin-bottom 5px
+    position relative
+    padding-left status_tag_size + 10
+    .status_tag
+      margin 0
+      position absolute
+      left 2px
+      top 7px

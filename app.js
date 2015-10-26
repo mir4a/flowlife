@@ -65,6 +65,8 @@ app.use(lusca({
 }));
 
 app.use(function(req, res, next) {
+  //TODO: I'm not sure if this is a good idea store all info about user at res.locals.
+  // Let's assume he has large collection of flowers, how this will affect the app?
   res.locals.user = req.user;
   next();
 });

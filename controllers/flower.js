@@ -2,6 +2,7 @@ var async = require('async');
 var nodemailer = require('nodemailer');
 var Flower = require('../models/Flower');
 var User = require('../models/User');
+var wateringHelper = require('../helpers/wateringHelper');
 
 
 /**
@@ -72,10 +73,19 @@ exports.showFlower = function(req, res, next) {
     }
 
     var flower = doc[0].flower;
+    var nextWatering = wateringHelper.nextWateringTime(flower.lastWatering, flower.wateringInterval);
 
     res.render('flower/show', {
       title: `Flower: ${flower.name}`,
-      flower: flower
+      flower: {
+        name: flower.name,
+        species: flower.species,
+        live: flower.live,
+        interval: flower.wateringInterval,
+        wateringCounter: flower.wateringCounter,
+        nextWatering: nextWatering,
+        lastWatering: flower.lastWatering.toUTCString()
+      }
     });
   }
 

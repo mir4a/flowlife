@@ -1,6 +1,15 @@
 extends ../layout
 
 block content
-  h3 All of my flowers
+  h3
+    | All of my flowers
+    | &nbsp;
+    small (#{user.flowers.length})
 
-  pre #{user}
+  ul.flowers_list
+    each flower in user.flowers
+      - var status_class = (flower.live ? 'live' : 'dead')
+      li.item
+        a(href='/flower/#{flower.name}')
+          | #{flower.name}
+          span(class='status_tag #{status_class}')
