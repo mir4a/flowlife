@@ -82,6 +82,33 @@ app.use(function ( req, res, next ) {
   next(err);
 });
 
+
+var kue = require('kue'),
+  cluster = require('cluster'),
+  queue = kue.createQueue();
+
+kue.app.listen(3055);
+
+//var clusterWorkerSize = require('os').cpus().length;
+//
+//if ( cluster.isMaster ) {
+//  for (var i = 0; i < clusterWorkerSize; i++) {
+//    cluster.fork();
+//  }
+//} else {
+//  queue.process('email', 10, function ( job, done ) {
+//    var pending = 5
+//      , total = pending;
+//
+//    var interval = setInterval(function () {
+//      job.log('sending!');
+//      job.progress(total - pending, total);
+//      --pending || done();
+//      pending || clearInterval(interval);
+//    }, 1000);
+//  });
+//}
+
 // error handlers
 
 // development error handler

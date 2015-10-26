@@ -3,7 +3,21 @@ var nodemailer = require('nodemailer');
 var Flower = require('../models/Flower');
 var User = require('../models/User');
 var wateringHelper = require('../helpers/wateringHelper');
+var kue = require('kue');
+var queue = kue.createQueue();
 
+
+//FIXME: Move this into mailerHelper
+function createEmailJob(text, delay) {
+  var email = queue.create('email', {
+    title: 'Account renewal required',
+    to: 'tj@learnboost.com',
+    template: text
+  }).delay(delay)
+    .priority('high')
+    .save();
+  return email;
+}
 
 /**
  * GET /flower/new
@@ -44,6 +58,13 @@ exports.addFlower = function(req, res, next) {
     user.save(function(err){
       if (err) next(err);
       console.log(`Flower ${user.flowers[user.flowers.length - 1].name} added`);
+
+      //FIXME: Refactor with mailerHelper
+      var nextWatering = wateringHelper.nextWateringTime(new Date(), req.body.wateringInterval);
+      var nextWateringInMilliseconds = wateringHelper.nextWateringInMilliseconds(nextWatering);
+
+      createEmailJob(nextWateringInMilliseconds, `Please add one water portion for ${req.body.name} flower`);
+
       return res.redirect(`/flower/${encodeURI(user.flowers[user.flowers.length - 1].name)}`);
     });
   });
@@ -81,7 +102,7 @@ exports.showFlower = function(req, res, next) {
         name: flower.name,
         species: flower.species,
         live: flower.live,
-        interval: flower.wateringInterval,
+        wateringInterval: flower.wateringInterval,
         wateringCounter: flower.wateringCounter,
         nextWatering: nextWatering,
         lastWatering: flower.lastWatering.toUTCString()
