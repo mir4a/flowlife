@@ -14,7 +14,7 @@ exports.showAddNewFlower = function(req, res, next) {
     title: 'Add new flower'
   });
 
-}
+};
 
 
 /**
@@ -33,23 +33,20 @@ exports.addFlower = function(req, res, next) {
     return res.redirect('/flower/new');
   }
 
-  var flower = new Flower({
-    name: req.body.name,
-    species: req.body.species,
-    wateringInterval: req.body.wateringInterval
-  });
-
-  Flower.findOne({ name: req.body.name }, function(err, existingFlower) {
-    if (existingFlower) {
-      req.flash('errors', { msg: `Flower with ${existingFlower.name} name already exist. Please pick another name` });
-      return res.redirect('/flower/new');
-    }
-    flower.save(function(err) {
-      if (err) return next(err);
-      console.log('Flower ${flower.name} added');
-      return res.redirect('/flower/${flower.name}');
+  User.findOne({ email: res.locals.user.email }, function ( err, user ) {
+    if (err) throw err;
+    user.flowers.push({
+      name: req.body.name,
+      species: req.body.species,
+      wateringInterval: req.body.wateringInterval
+    });
+    user.save(function(err){
+      if (err) next(err);
+      console.log(`Flower ${user.flowers[user.flowers.length - 1].name} added`);
+      return res.redirect(`/flower/${encodeURI(user.flowers[user.flowers.length - 1].name)}`);
     });
   });
+
 
 };
 
@@ -58,16 +55,40 @@ exports.addFlower = function(req, res, next) {
  */
 exports.showFlower = function(req, res, next) {
 
-  Flower.findOne({ name: req.params.name }, function(err, flower){
-    if (!flower) {
-      req.flash('errors', { msg: `No flowers foud with name: ${req.params.name}.` });
+  User
+    .aggregate(
+      { $match: { email: res.locals.user.email } },
+      { $unwind: '$flowers' },
+      { $match: { 'flowers.name': req.params.name } },
+      { $project: { _id: 0, flower: '$flowers' } }
+    )
+    .exec(showFlowerCb);
+
+  function showFlowerCb(err, doc) {
+    if (err) next(err);
+    if (!doc) {
+      req.flash('errors', { msg: `No flowers with name: ${req.params.name} were find` });
       return res.redirect('/flowers');
     }
+
+    var flower = doc[0].flower;
 
     res.render('flower/show', {
       title: `Flower: ${flower.name}`,
       flower: flower
     });
+  }
+
+};
+
+/**
+ * GET /flowers
+ * Get all user's flowers
+ */
+exports.getAllFlowers = function(req, res, next) {
+
+  res.render('flower/all', {
+    title: 'All of my flowers'
   });
 
-}
+};

@@ -2,6 +2,8 @@ extends ../layout
 
 block content
   h3 Show #{flower.name}
+  //FIXME: Move this logic to controller
+  pre #{user.flowers[2].nextWatering()}
 
-  pre
-    #{flower}
+  //pre Next watering at #{flower.nextWatering()}
+  //pre #{flower}

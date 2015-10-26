@@ -9,5 +9,15 @@ var flowerSchema = new mongoose.Schema({
   live: { type: Boolean, default: true }
 });
 
+/**
+ * Calculate next watering
+ */
+//FIXME: Doesn't work at child call, work if called from parent, like user.flowers[0].nextWatering()
+flowerSchema.methods.nextWatering = function(){
+  var wateringDate = this.lastWatering;
+  wateringDate.setDate(this.lastWatering.getDate() + this.wateringInterval);
+  return wateringDate.toUTCString();
+};
+
 
 module.exports = mongoose.model('Flower', flowerSchema);

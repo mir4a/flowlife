@@ -1,7 +1,7 @@
 var bcrypt = require('bcrypt-nodejs');
 var crypto = require('crypto');
 var mongoose = require('mongoose');
-var Flower = require('./Flower');
+var Flower = require('./Flower').schema;
 
 var userSchema = new mongoose.Schema({
   email: { type: String, unique: true, lowercase: true },
