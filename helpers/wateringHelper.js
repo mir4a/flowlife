@@ -1,6 +1,5 @@
 module.exports = {
-  nextWateringTime: nextWateringTime,
-  nextWateringInMilliseconds: nextWateringInMillisecondsFromNow
+  nextWateringTime: nextWateringTime
 };
 
 /**
@@ -11,12 +10,8 @@ module.exports = {
  */
 function nextWateringTime(lastUpdate, interval) {
   var wateringDate = new Date(lastUpdate);
-  wateringDate.setDate(wateringDate.getDate() + interval);
-  return wateringDate.toUTCString();
-}
+  wateringDate.setDate(wateringDate.getDate() + parseInt(interval));
+  var diff = wateringDate.getTime() - Date.now();
 
-function nextWateringInMillisecondsFromNow(nextWateringDate) {
-  var wateringDate = new Date(nextWateringDate),
-      dateNow = Date.now();
-  return wateringDate.getTime() - dateNow;
+  return diff <= 1000*3600*24 ? 1000*60 : diff - 1000*3600*24;
 }

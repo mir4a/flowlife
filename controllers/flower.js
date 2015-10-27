@@ -3,27 +3,15 @@ var nodemailer = require('nodemailer');
 var Flower = require('../models/Flower');
 var User = require('../models/User');
 var wateringHelper = require('../helpers/wateringHelper');
-var kue = require('kue');
-var queue = kue.createQueue();
-
-
-//FIXME: Move this into mailerHelper
-function createEmailJob(text, delay) {
-  var email = queue.create('email', {
-    title: 'Account renewal required',
-    to: 'tj@learnboost.com',
-    template: text
-  }).delay(delay)
-    .priority('high')
-    .save();
-  return email;
-}
+var mailerHelper = require('../helpers/mailerHelper');
+var urlHelper = require('../helpers/urlHelper');
 
 /**
  * GET /flower/new
  * Show add new flower form
  */
 exports.showAddNewFlower = function(req, res, next) {
+
 
   res.render('flower/new', {
     title: 'Add new flower'
@@ -48,6 +36,7 @@ exports.addFlower = function(req, res, next) {
     return res.redirect('/flower/new');
   }
 
+
   User.findOne({ email: res.locals.user.email }, function ( err, user ) {
     if (err) throw err;
     user.flowers.push({
@@ -61,11 +50,23 @@ exports.addFlower = function(req, res, next) {
 
       //FIXME: Refactor with mailerHelper
       var nextWatering = wateringHelper.nextWateringTime(new Date(), req.body.wateringInterval);
-      var nextWateringInMilliseconds = wateringHelper.nextWateringInMilliseconds(nextWatering);
 
-      createEmailJob(nextWateringInMilliseconds, `Please add one water portion for ${req.body.name} flower`);
+      var emailSettings = {
+        to: res.locals.user.email,
+        subject: `Don't forget to watering your ${req.body.name} flower`,
+        url: urlHelper.fullUrl(''),
+        user: {
+          name: res.locals.user.profile.name || 'Dear FlowLife user'
+        },
+        flower: {
+          name: req.body.name,
+          link: urlHelper.fullUrl(req.body.name, 'flower/')
+        },
+        delay: nextWatering
+      };
 
-      return res.redirect(`/flower/${encodeURI(user.flowers[user.flowers.length - 1].name)}`);
+      mailerHelper.createEmailJob(emailSettings);
+      return res.redirect(`/flower/${encodeURIComponent(req.body.name)}`);
     });
   });
 
@@ -82,6 +83,7 @@ exports.showFlower = function(req, res, next) {
       { $match: { email: res.locals.user.email } },
       { $unwind: '$flowers' },
       { $match: { 'flowers.name': req.params.name } },
+      { $limit: 1 },
       { $project: { _id: 0, flower: '$flowers' } }
     )
     .exec(showFlowerCb);
