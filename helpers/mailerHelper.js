@@ -33,7 +33,6 @@ function sendEmail( settings, next ) {
 
 }
 
-//FIXME: Move this into mailerHelper
 function createEmailJob( settings, next ) {
   var email = queue.create('email', {
     title: `Email to ${settings.to} with subject: ${settings.subject}`,
